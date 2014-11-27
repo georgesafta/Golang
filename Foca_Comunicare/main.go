@@ -283,7 +283,7 @@ func stop(s []int, p2 *Poste) bool {
 }
 
 func stop_robot(r *Robot) {
-	fmt.Println("Robotul #%d sta pe loc\n", r.id)
+	fmt.Printf("Robotul #%d sta pe loc\n", r.id)
 }
 
 func verificaSiTrimite(r *Robot, i *Info) {
@@ -312,6 +312,7 @@ func deamon(i *Info) {
 }
 
 func main() {
+	rand.Seed(time.Now().Unix())
 	s := []int{4, 3, 1, 2}
 	s1 := []int{7, 6}
 	s2 := []int{5, 8}
