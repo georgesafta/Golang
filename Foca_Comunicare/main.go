@@ -287,10 +287,10 @@ func stop_robot(r *Robot) {
 }
 
 func verificaSiTrimite(r *Robot, i *Info) {
-	if r.id != i.id && r.nr_poste == i.post && r.obj_ch < i.nr_incarcat {
+	if r.id != i.id && r.nr_poste == i.post && r.obj_ch > i.nr_incarcat {
 		stop_robot(r)
-		for r.id != i.id && r.nr_poste == i.post && r.obj_ch < i.nr_incarcat {
-		}
+		/*for r.id != i.id && r.nr_poste == i.post && r.obj_ch > i.nr_incarcat {
+		}*/
 	}
 	//var info1 *Info
 	info1 := new(Info)
