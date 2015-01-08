@@ -14,6 +14,7 @@ import (
 var k = make([]int, 8)
 var terminoiu = make(chan string)
 var mutex sync.Mutex
+var mutexfin sync.Mutex
 var mutex1 sync.Mutex
 var mutex2 sync.Mutex
 
@@ -48,18 +49,20 @@ func ch_obj(p *Poste, r *Robot) { // incarcarea primului obiect din lista
 	} else {
 		p.obj = []int{}
 	}
-	mutex.Unlock()
 	if r.mp2 == 30000 {
 		r.mp2 = r.obj_ch
 	}
-	mutex.Lock()
-	fmt.Printf("Incarcare robot #%d cu : %d de la postul %d\n", r.id, r.obj_ch, p.nr)
+	if r.flag_ch == true {
+		fmt.Printf("Incarcare robot #%d cu : %d de la postul %d\n", r.id, r.obj_ch, p.nr)
+	}
 	if len(p.obj) > 0 {
-		fmt.Printf("Postul %d contine: ", p.nr)
+		continut := "Postul " + strconv.Itoa(p.nr) + " contine:"
 		for i := 0; i < len(p.obj); i++ {
-			fmt.Printf("%d ", p.obj[i])
+			//fmt.Printf("%d ", p.obj[i])
+			continut += " " + strconv.Itoa(p.obj[i])
 		}
-		fmt.Printf("\n")
+		continut += "\n"
+		fmt.Print(continut)
 	} else {
 		fmt.Printf("Postul %d este gol\n", p.nr)
 	}
@@ -67,7 +70,7 @@ func ch_obj(p *Poste, r *Robot) { // incarcarea primului obiect din lista
 }
 
 func ch_obj_fin(p *Poste, r *Robot) { // incarcarea ultimlui obiect din lista
-	mutex.Lock()
+	mutexfin.Lock()
 	f := 0
 	if len(p.obj) != 0 {
 		r.flag_ch = true
@@ -79,33 +82,39 @@ func ch_obj_fin(p *Poste, r *Robot) { // incarcarea ultimlui obiect din lista
 	} else {
 		p.obj = []int{}
 	}
-	fmt.Printf("Incarcare robot #%d cu : %d de la postul %d\n", r.id, r.obj_ch, p.nr)
+	if r.flag_ch == true {
+		fmt.Printf("Incarcare robot #%d cu : %d de la postul %d\n", r.id, r.obj_ch, p.nr)
+	}
 	if len(p.obj) > 0 {
-		fmt.Printf("Postul %d contine: ", p.nr)
+		continut := "Postul " + strconv.Itoa(p.nr) + " contine:"
 		for i := 0; i < len(p.obj); i++ {
-			fmt.Printf("%d ", p.obj[i])
+			//fmt.Printf("%d ", p.obj[i])
+			continut += " " + strconv.Itoa(p.obj[i])
 		}
-		fmt.Printf("\n")
+		continut += "\n"
+		fmt.Print(continut)
 	} else {
 		fmt.Printf("Postul %d este gol\n", p.nr)
 	}
-	mutex.Unlock()
+	mutexfin.Unlock()
 }
 
 func dch_obj(p *Poste, r *Robot) { // descarcare obiect
-	mutex.Lock()
+	//mutex.Lock()
 	p.obj = append(p.obj, r.obj_ch)
 	fmt.Printf("Robotul #%d descarca : %d la postul %d\n", r.id, r.obj_ch, p.nr)
 	if len(p.obj) > 0 {
-		fmt.Printf("Postul %d contine: ", p.nr)
+		continut := "Postul " + strconv.Itoa(p.nr) + " contine:"
 		for i := 0; i < len(p.obj); i++ {
-			fmt.Printf("%d ", p.obj[i])
+			//fmt.Printf("%d ", p.obj[i])
+			continut += " " + strconv.Itoa(p.obj[i])
 		}
-		fmt.Printf("\n")
+		continut += "\n"
+		fmt.Print(continut)
 	} else {
 		fmt.Printf("Postul %d este gol\n", p.nr)
 	}
-	mutex.Unlock()
+	//mutex.Unlock()
 	r.flag_ch = false
 	r.obj_ch = 30000
 }
@@ -176,7 +185,7 @@ func logique_2(p1 *Poste, p2 *Poste, p3 *Poste, r *Robot, s []int) {
 				if r.obj_ch > p2.obj[len(p2.obj)-1] {
 					dch_obj(p2, r)
 					if len(p3.obj) != 0 {
-						if p2.obj[len(p2.obj)-1] > p3.obj[0] {
+						if p2.obj[len(p2.obj)-1] > p3.obj[0] && r.flag_ch == false {
 							ch_obj_fin(p2, r)
 							if r.obj_ch < r.mp2 {
 								r.mp2 = r.obj_ch
